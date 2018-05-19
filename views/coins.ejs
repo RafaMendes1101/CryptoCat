@@ -1,0 +1,31 @@
+<% include partials/header %>
+
+<div class="container">
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Coins page!</h1>
+			<a class="btn btn-primary bt-lg" href="/coins/newcoin">Add New Coin</a>
+			<p>Select a coin</p>
+			<select>
+				<% Coin.forEach((coin) => { %>
+				<option value="coin.name"> <%= coin.name %> </option>
+				<% });%>
+			</select>
+			<br><a href="/">Home</a>
+		</div>
+	</div>
+
+	<div class="row text-center" style="display: flex; flex-wrap: wrap;">
+		<% Coin.forEach((coin) => { %>
+		<div class="col-md-3 col-sm6">
+			<div class="thumbnail">				
+				<img src="<%= coin.icon %>">
+				<div class="caption">
+					<h4><%= coin.name %></h4>
+				</div>
+			</div>
+		</div>
+		<% }); %>
+	</div>
+	<% include partials/footer %>
+</div>
