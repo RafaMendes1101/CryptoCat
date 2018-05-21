@@ -3,12 +3,11 @@
 <div class="container">
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Coins page!</h1>
 			<a class="btn btn-primary bt-lg" href="/coins/newcoin">Add New Coin</a>
 			<p>Select a coin</p>
 			<select id="coinSelector">
 				<% Coin.forEach((coin) => { %>
-				<option value="<%= coin.name %>" id= "<%= coin.name %>" > <%= coin.name %> </option>				
+				<option value="<%= coin.name %>-<%= coin.acronym %>"> <%= coin.name %> </option>				
 				<% });%>
 			</select>
 			<br><a href="/">Home</a>
@@ -16,12 +15,8 @@
 	</div>
 	<script type="text/javascript">
 		var selectedCoin = document.getElementById("coinSelector");
-
-		selectedCoin.addEventListener("click", (c) =>{ 
-			var options = selectedCoin.querySelectorAll("option"); 
-			var count = options.length; 
-			showCoin(); 
-		}); 
+		var selectOption = document.getElementsByTagName("option");
+		console.log(selectOption);
 
 		selectedCoin.addEventListener("change", (c) =>{ 
 			//console.log(selectedCoin.value + "change");
@@ -29,9 +24,12 @@
 		}) ;
 
 		function showCoin() {
-			document.getElementsByTagName("h4")[0].innerHTML= selectedCoin.value;
-			document.getElementsByTagName("img")[0].src = "/logos/" + selectedCoin.value + ".png";
-
+			var name = selectedCoin.value.split("-")[0];
+			var acronym = selectedCoin.value.split("-")[1];
+			document.getElementsByTagName("h4")[0].innerHTML= name;
+			document.getElementsByTagName("img")[0].src = "/logos/" + name + ".png";
+			document.getElementById("acronym").innerHTML = "Learn more about " + acronym;
+			document.getElementById("acronym").href ="/coins/" + acronym;
 		}
 	</script>
 
@@ -40,7 +38,7 @@
 			<div class="thumbnail">				
 				<img src="">
 				<div class="caption">
-					<h4>Pick a coin to learn more about.</h4>
+					<h4>Pick a coin to learn more about.</h4><a href="" class="btn btn-primary" id="acronym">Coin Acronym</a>
 				</div>
 			</div>
 		</div>

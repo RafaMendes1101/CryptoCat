@@ -34,10 +34,20 @@ app.set("view engine", "ejs");
 
 var coinSchema = new mongoose.Schema({
 	name: String,
-	icon: String
+	acronym: String,
+	icon: String,
+	description: String
 });
 
 var Coin = mongoose.model("Coin", coinSchema);
+
+var userSchema = new mongoose.Schema({
+	username: String,
+	password: String,
+	email: String
+});
+
+var User = mongoose.model("User", userSchema);
 
 app.get("/", (req, res) => {
 	res.render("home");
@@ -58,23 +68,47 @@ app.get("/coins", (req, res)=> {
 });
 
 
-
-//CREATE ROUTE
-app.post("/coins", upload.single("icon") ,(req, res)=> {	
-	cloudinary.uploader.upload(req.file.path, function(result){
+//CREATE NEW COIN ROUTE
+app.post("/coins", upload.single("icon") ,(req, res) => {	
+	cloudinary.uploader.upload(req.file.path, (result) => {
 		var name = req.body.name;
 		var icon = result.secure_url;
-		var newCoin = {name: name, icon: icon};
+		var acronym = req.body.acronym;
+		var desc = req.body.description;
+		var newCoin = {name: name, acronym: acronym, icon: icon, description: desc};
 		console.log(newCoin);
-		Coin.create(newCoin, function(err, newCoin){
+		Coin.create(newCoin, (err, newCoin) => {
 			if(err){
 				console.log("erro")
 				return res.redirect("back");
 			}else{
-				console.log(newCoin);
+				console.log("Nova moeda adicionada");
+
 			}
 		});
 		res.redirect("/coins");
+	});
+});
+
+
+// Render new user page
+app.get("/newuser", (req,res) =>{
+	res.render("newuser");
+});
+
+//create new user route
+app.post("/newuser", (req,res) => {
+	var name = req.body.name;
+	var email = req.body.email;
+	var password = req.body.password;
+	var newUser = {name: name, email: email, password: password};
+	User.create(newUser, (err, newUser) =>{
+		if(err){
+			console.log(err);
+		}else{
+			console.log("Novo usuario criado");
+			res.redirect("/");
+		}
 	});
 });
 
@@ -83,7 +117,18 @@ app.get("/coins/newcoin", (req,res) => {
 	res.render("newcoin.ejs");
 		}); //show the form to create a new coin
 
+//SHOW -  shows more info about one coin
+app.get("/coins/:acronym", (req,res) =>{
+	Coin.findOne({acronym: req.params.acronym}, (err,foundCoin) =>{
+		if (err){
+			console.log(err)
+		} else {
+			res.render("show.ejs",{Coin:foundCoin});
+		}
+	});
+//req.params.acronym;
 
+});
 //show Coin
 
 app.listen(3000,  function(){
