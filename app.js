@@ -6,6 +6,7 @@ var fs = require("fs"); // file system
 var mongoose = require("mongoose");
 var multer = require('multer');
 var Coin = require("./models/coins");
+var User = require("./models/user");
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -35,13 +36,6 @@ app.set("view engine", "ejs");
 
 
 
-var userSchema = new mongoose.Schema({
-	username: String,
-	password: String,
-	email: String
-});
-
-var User = mongoose.model("User", userSchema);
 
 app.get("/", (req, res) => {
 	res.render("home");
