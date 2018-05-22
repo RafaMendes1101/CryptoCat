@@ -5,6 +5,7 @@ var path = require('path');
 var fs = require("fs"); // file system
 var mongoose = require("mongoose");
 var multer = require('multer');
+var Coin = require("./models/coins");
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -32,14 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-var coinSchema = new mongoose.Schema({
-	name: String,
-	acronym: String,
-	icon: String,
-	description: String
-});
 
-var Coin = mongoose.model("Coin", coinSchema);
 
 var userSchema = new mongoose.Schema({
 	username: String,
@@ -98,7 +92,7 @@ app.get("/newuser", (req,res) =>{
 
 //create new user route
 app.post("/newuser", (req,res) => {
-	var name = req.body.name;
+	var username = req.body.name;
 	var email = req.body.email;
 	var password = req.body.password;
 	var newUser = {name: name, email: email, password: password};

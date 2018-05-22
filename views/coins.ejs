@@ -3,45 +3,58 @@
 <div class="container">
 	<div class="jumbotron">
 		<div class="container">
-			<a class="btn btn-primary bt-lg" href="/coins/newcoin">Add New Coin</a>
-			<p>Select a coin</p>
+			<p>Cryptocurrencies are digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank.</p>
+			<a class="btn btn-primary bt-lg" href="/coins/newcoin">Add New Coin</a><br>
 			<select id="coinSelector">
+				<option value="">Pick a coin</option>
 				<% Coin.forEach((coin) => { %>
-				<option value="<%= coin.name %>-<%= coin.acronym %>"> <%= coin.name %> </option>				
+				<option value="<%= coin.name %>-<%= coin.acronym %>-<%= coin.icon%>"> <%= coin.name %> </option>				
 				<% });%>
 			</select>
-			<br><a href="/">Home</a>
 		</div>
 	</div>
 	<script type="text/javascript">
 		var selectedCoin = document.getElementById("coinSelector");
 		var selectOption = document.getElementsByTagName("option");
-		console.log(selectOption);
 
-		selectedCoin.addEventListener("change", (c) =>{ 
-			//console.log(selectedCoin.value + "change");
+		selectedCoin.addEventListener("change", () =>{ 
 			showCoin(); 
 		}) ;
 
 		function showCoin() {
+
 			var name = selectedCoin.value.split("-")[0];
 			var acronym = selectedCoin.value.split("-")[1];
-			document.getElementsByTagName("h4")[0].innerHTML= name;
-			document.getElementsByTagName("img")[0].src = "/logos/" + name + ".png";
-			document.getElementById("acronym").innerHTML = "Learn more about " + acronym;
-			document.getElementById("acronym").href ="/coins/" + acronym;
+			var icon = selectedCoin.value.split("-")[2];
+
+			if(!name){
+				var name = "pick";
+				var hide = document.getElementsByTagName("section")[0];
+				hide.style.display = "none";
+				event.stopPropagation();
+			} else {
+				var hide = document.getElementsByTagName("section")[0];
+				document.getElementsByTagName("h4")[0].innerHTML= name;
+				document.getElementsByTagName("img")[0].src = icon;
+				document.getElementById("acronym").innerHTML = "Learn more about " + acronym;
+				document.getElementById("acronym").href ="/coins/" + acronym;
+				hide.style.display = "block";
+
+				event.stopPropagation();
+			}
 		}
 	</script>
-
-	<div class="row text-center" style="display: flex; flex-wrap: wrap;">			
-		<div class="col-md-3 col-sm6">
-			<div class="thumbnail">				
-				<img src="">
-				<div class="caption">
-					<h4>Pick a coin to learn more about.</h4><a href="" class="btn btn-primary" id="acronym">Coin Acronym</a>
+	<section>
+		<div class="row text-center" style="display: flex; flex-wrap: wrap;">			
+			<div class="col-md-3 col-sm6">
+				<div class="thumbnail">				
+					<img src="">
+					<div class="caption">
+						<h4>Pick a coin to learn more about.</h4><a href="" class="btn btn-primary" id="acronym">Coin Acronym</a>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 	<% include partials/footer %>
 </div>
