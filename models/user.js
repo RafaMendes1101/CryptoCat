@@ -6,4 +6,4 @@ var userSchema = new mongoose.Schema({
 	email: String
 });
 
-module.exports = mongoose.model("Coins", userSchema);
+module.exports = mongoose.model("Users", userSchema);

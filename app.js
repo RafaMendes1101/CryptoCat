@@ -6,7 +6,11 @@ var fs = require("fs"); // file system
 var mongoose = require("mongoose");
 var multer = require('multer');
 var Coin = require("./models/coins");
-var User = require("./models/user");
+var Users = require("./models/user");
+var seedDB = require("./seeds");
+
+//seedDB(); 
+
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -25,7 +29,7 @@ var cloudinary = require('cloudinary');
 cloudinary.config({ 
 	cloud_name: 'rafamendes', 
 	api_key: 372929523623984, 
-	api_secret: "7D6EVDvpca4gjb_N1bR_hdCxMGI"
+	api_secret: ""
 });
 
 
@@ -90,7 +94,7 @@ app.post("/newuser", (req,res) => {
 	var email = req.body.email;
 	var password = req.body.password;
 	var newUser = {name: name, email: email, password: password};
-	User.create(newUser, (err, newUser) =>{
+	Users.create(newUser, (err, newUser) =>{
 		if(err){
 			console.log(err);
 		}else{
