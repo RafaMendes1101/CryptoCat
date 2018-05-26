@@ -12,6 +12,7 @@
 				<% Coin.comments.forEach((comment) => { %>
 				<p><%= comment.author %>: <%= comment.text %></p>
 				<%});%>
+				<a href="/coins/<%= Coin.acronym %>/comments/new" class="btn btn-primary bt-lg">Comment</a>
 			</div>
 			<iframe width="560" height="315" src="https://www.youtube.com/embed/Da9Q57vov_c" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 		</div>
