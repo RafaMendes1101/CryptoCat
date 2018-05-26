@@ -3,14 +3,17 @@
 <div class="container">
 	<div class="jumbotron">
 		<div class="container">
-			<p>Cryptocurrencies are digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank.</p>
-			<a class="btn btn-primary bt-lg" href="/coins/newcoin">Add New Coin</a><br>
-			<select id="coinSelector">
-				<option value="">Pick a coin</option>
-				<% Coin.forEach((coin) => { %>
-				<option value="<%= coin.name %>-<%= coin.acronym %>-<%= coin.icon%>"> <%= coin.name %> </option>				
-				<% });%>
-			</select>
+			<p>Cryptocurrencies are digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank.</p>		
+			<div class="col-sm-2">
+				<a class="btn btn-primary bt-lg" href="/coins/newcoin">Add New Coin</a>
+				<br><br>
+				<select id="coinSelector" class="form-control">
+					<option value="">Pick a coin</option>
+					<% Coin.forEach((coin) => { %>
+					<option value="<%= coin.name %>-<%= coin.acronym %>-<%= coin.icon%>"> <%= coin.name %> </option>				
+					<% });%>
+				</select>
+			</div>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -46,7 +49,7 @@
 	</script>
 	<section>
 		<div class="row text-center" style="display: flex; flex-wrap: wrap;">			
-			<div class="col-md-3 col-sm6">
+			<div class="col-md-3 col-sm-6">
 				<div class="thumbnail">				
 					<img src="">
 					<div class="caption">
