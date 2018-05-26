@@ -5,12 +5,12 @@
 	<div class="row">
 		<h1 style="text-align: center;">NEW COMMENT FORM</h1>
 		<div style="width: 30%; margin: 30px auto;">
-			<form action="/coins/:acronym/comments" method="POST">	
+			<form action="/coins/<%= coin.acronym %>/comments" method="POST">	
 				<div class="form-group">	
-					<input class="form-control" type="text" placeholder="comment" name="comment" required="">	
+					<input class="form-control" type="text" placeholder="comment" name="comment[text]" required="">	
 				</div>
 				<div class="form-group">	
-					<input class="form-control" type="text" placeholder="author" name="author" required>	
+					<input class="form-control" type="text" placeholder="author" name="comment[author]" required>	
 				</div>
 				<div class="form-group">
 					<button class="btn btn-lg upload-btn btn-block">Submit!</button>
