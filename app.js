@@ -125,23 +125,38 @@ app.get("/coins/:acronym", (req,res) =>{
 //comments routes
 //===============
 app.get("/coins/:acronym/comments/new", (req,res) => {
-	res.render("comments/new");
-})
+	Coin.findOne({acronym: req.params.acronym}, (err, coin) => {
+		//console.log(coin)
+		if(err){
+			console.log(err);
+		}else{
+			res.render("comments/new", {coin: coin});
+		}
+	});		
+});
 
-app.post("coins/:acronym/comments", (req, res) => {
-	Coins.findOne({acronym: req.params.acronym}, (err, coin) => {
+app.post("/coins/:acronym/comments", (req, res) => {
+	Coin.findOne({acronym: req.params.acronym}, (err, coin) => {
 		if(err){
 			console.log(err)
+			res.redirect("/coins");
 		}else{
+			console.log(req.body.comment);
 			Comment.create(req.body.comment, (err,comment) => {
-				comment.comments.push(comment);
-				comment.save();
-				res.redirect("/coins/" + coin.acronym);
-			})
+				if(err){				
+					res.redirect("/coins/:acronym");
+				}else{
+					coin.comments.push(comment);
+					coin.save();
+					res.redirect("/coins/" + coin.acronym);
+				}
+			});
 		}
 	});
 });
 
+
+
 app.listen(3000,  () => {
-	console.log("CryptoCat Server Started")
+	console.log("CryptoCat Server Started");
 });
