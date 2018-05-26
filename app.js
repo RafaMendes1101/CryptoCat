@@ -9,6 +9,7 @@ var Coin = require("./models/coins");
 var Users = require("./models/user");
 var seedDB = require("./seeds");
 var Comment = require("./models/comment");
+
 seedDB(); 
 
 var storage = multer.diskStorage({
@@ -29,7 +30,7 @@ var cloudinary = require('cloudinary');
 cloudinary.config({ 
 	cloud_name: 'rafamendes', 
 	api_key: 372929523623984, 
-	api_secret: ""
+	api_secret: "7D6EVDvpca4gjb_N1bR_hdCxMGI"
 });
 
 
@@ -52,7 +53,7 @@ app.get("/coins", (req, res)=> {
 		if(err){
 			console.log(err);
 		} else {
-			// console.log(allCoins);
+			
 			res.render("coins/coins",{Coin:allCoins}); // feed the coins.ejs with the Coins found in the DB and render the template
 		};
 	});
@@ -67,8 +68,9 @@ app.post("/coins", upload.single("icon") ,(req, res) => {
 		var icon = result.secure_url;
 		var acronym = req.body.acronym;
 		var desc = req.body.description;
-		var newCoin = {name: name, acronym: acronym, icon: icon, description: desc};
-		console.log(newCoin);
+		var video = req.body.video;
+		var newCoin = {name: name, acronym: acronym, icon: icon, description: desc, video: video};
+		//console.log(newCoin);
 		Coin.create(newCoin, (err, newCoin) => {
 			if(err){
 				console.log("erro")
@@ -78,7 +80,7 @@ app.post("/coins", upload.single("icon") ,(req, res) => {
 
 			}
 		});
-		res.redirect("/coins/coins");
+		res.redirect("/coins/:acronym");
 	});
 });
 
@@ -115,6 +117,7 @@ app.get("/coins/:acronym", (req,res) =>{
 		if (err){
 			console.log(err)
 		} else {
+			//console.log(foundCoin);
 			res.render("coins/show.ejs",{Coin:foundCoin});
 		}
 	});
@@ -141,7 +144,7 @@ app.post("/coins/:acronym/comments", (req, res) => {
 			console.log(err)
 			res.redirect("/coins");
 		}else{
-			console.log(req.body.comment);
+		//	console.log(req.body.comment);
 			Comment.create(req.body.comment, (err,comment) => {
 				if(err){				
 					res.redirect("/coins/:acronym");
