@@ -40,16 +40,16 @@ function seedDB(){
 						if(err){
 							console.log(err);
 						}
-						comment.create({text: "what a shitcoin!", author: "Statist dickhead"}, (err, comment) => {
+						comment.create({text: "what a shitcoin!", author: "Banker"}, (err, comment)=>{
 							if(err){
 								console.log(err);
 							}else{
 								console.log("Comment created");		
-								Coin.comments.push(comment);
-								Coin.save();
+								data.comments.push(comment);
+								data.save();
 							}
 						});	
-					})
+					});
 				}
 			});
 		});

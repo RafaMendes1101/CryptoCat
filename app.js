@@ -8,8 +8,8 @@ var multer = require('multer');
 var Coin = require("./models/coins");
 var Users = require("./models/user");
 var seedDB = require("./seeds");
-
-//seedDB(); 
+var Comment = require("./models/comment");
+seedDB(); 
 
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
@@ -53,7 +53,7 @@ app.get("/coins", (req, res)=> {
 			console.log(err);
 		} else {
 			// console.log(allCoins);
-			res.render("coins",{Coin:allCoins}); // feed the coins.ejs with the Coins found in the DB and render the template
+			res.render("coins/coins",{Coin:allCoins}); // feed the coins.ejs with the Coins found in the DB and render the template
 		};
 	});
 
@@ -78,14 +78,14 @@ app.post("/coins", upload.single("icon") ,(req, res) => {
 
 			}
 		});
-		res.redirect("/coins");
+		res.redirect("/coins/coins");
 	});
 });
 
 
 // Render new user page
 app.get("/newuser", (req,res) =>{
-	res.render("newuser");
+	res.render("users/newuser");
 });
 
 //create new user route
@@ -106,23 +106,42 @@ app.post("/newuser", (req,res) => {
 
 //NEW - show form to create new coin post
 app.get("/coins/newcoin", (req,res) => {
-	res.render("newcoin.ejs");
+	res.render("coins/newcoin.ejs");
 		}); //show the form to create a new coin
 
 //SHOW -  shows more info about one coin
 app.get("/coins/:acronym", (req,res) =>{
-	Coin.findOne({acronym: req.params.acronym}, (err,foundCoin) =>{
+	Coin.findOne({acronym: req.params.acronym}).populate("comments").exec(function(err,foundCoin){
 		if (err){
 			console.log(err)
 		} else {
-			res.render("show.ejs",{Coin:foundCoin});
+			res.render("coins/show.ejs",{Coin:foundCoin});
 		}
 	});
 //req.params.acronym;
 
 });
-//show Coin
+//===============
+//comments routes
+//===============
+app.get("/coins/:acronym/comments/new", (req,res) => {
+	res.render("comments/new");
+})
 
-app.listen(3000,  function(){
+app.post("coins/:acronym/comments", (req, res) => {
+	Coins.findOne({acronym: req.params.acronym}, (err, coin) => {
+		if(err){
+			console.log(err)
+		}else{
+			Comment.create(req.body.comment, (err,comment) => {
+				comment.comments.push(comment);
+				comment.save();
+				res.redirect("/coins/" + coin.acronym);
+			})
+		}
+	});
+});
+
+app.listen(3000,  () => {
 	console.log("CryptoCat Server Started")
 });
