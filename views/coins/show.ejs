@@ -1,10 +1,24 @@
 <% include ../partials/header %>
+
 <section class="container">
+	<div class="col-md-2">
+		<p class="lead">Cryptos</p>
+		<div class="list-group">
+			
+			<li class="list-group-item"><%=Coin.name%></li>
+
+		</div>
+	</div>
+
 	<div class="row text-center" style="display: flex; flex-wrap: wrap;">	
-		<div class="col-md-3 col-sm-6">
-			<div class="thumbnail">
-				<div class="form-group column ">
-					<h1><%= Coin.name%></h1><img src="<%= Coin.icon %>" alt="Bitcoin logo" style="width: 30%; height: 30%;"><br>
+		<div class="col-md-5 col-sm-6">
+			<div class="thumbnail" style="width: 170%; height: 90%;">
+				<div class="form-group row">
+					<h1><%= Coin.name%></h1><img src="<%= Coin.icon %>" alt="Bitcoin logo" style="width: 30%; height: 30%;"><br><br>
+
+					
+					<iframe width="560" height="315" src="<%=Coin.video%>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					<br>
 					<p style="padding: 20px;"><%= Coin.description%></p>
 				</div>
 			</div>
@@ -13,10 +27,11 @@
 				<p><%= comment.author %>: <%= comment.text %></p>
 				<%});%>
 				<a href="/coins/<%= Coin.acronym %>/comments/new" class="btn btn-primary bt-lg">Comment</a>
-			</div>
-			<iframe width="560" height="315" src="https://www.youtube.com/embed/Da9Q57vov_c" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+			</div>			
 		</div>
 	</div>
+
+
 </section>
 
 <% include ../partials/footer %>
