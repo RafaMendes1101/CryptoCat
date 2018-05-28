@@ -6,12 +6,27 @@ var fs = require("fs"); // file system
 var mongoose = require("mongoose");
 var multer = require('multer');
 var Coin = require("./models/coins");
-var Users = require("./models/user");
+var User = require("./models/user");
 var seedDB = require("./seeds");
+var passport = require("passport");
+var LocalStrategy = require("passport-local");
 var Comment = require("./models/comment");
 
 //seedDB(); 
 
+//PASSPORT CONFIGURATION
+app.use(require("express-session")({
+	secret: "site foda",
+	resave: false,
+	saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+// ============================================== \\
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -101,7 +116,7 @@ app.post("/newuser", (req,res) => {
 	var email = req.body.email;
 	var password = req.body.password;
 	var newUser = {name: name, email: email, password: password};
-	Users.create(newUser, (err, newUser) =>{
+	User.create(newUser, (err, newUser) =>{
 		if(err){
 			console.log(err);
 		}else{
