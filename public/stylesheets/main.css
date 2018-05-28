@@ -1,0 +1,15 @@
+.thumbnail {
+	padding: 0;
+}
+
+#coin-description {
+	text-align: justify;
+	position: relative;
+	padding-top: 5%;
+}
+
+#grupo-lista {
+	text-align: justify;
+	position: relative;
+	padding-top: 7%;
+}
