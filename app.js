@@ -10,7 +10,7 @@ var Users = require("./models/user");
 var seedDB = require("./seeds");
 var Comment = require("./models/comment");
 
-seedDB(); 
+//seedDB(); 
 
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
@@ -43,7 +43,13 @@ app.set("view engine", "ejs");
 
 
 app.get("/", (req, res) => {
-	res.render("home");
+	Coin.find({}, (err, allCoins)=>{ //find all Coins on DB
+		if(err){
+			console.log(err);
+		} else {
+			res.render("home",{Coin:allCoins});
+		};
+	});
 });
 
 //INDEX ROUTE
@@ -52,8 +58,7 @@ app.get("/coins", (req, res)=> {
 	Coin.find({}, (err, allCoins)=>{ //find all Coins on DB
 		if(err){
 			console.log(err);
-		} else {
-			
+		} else {			
 			res.render("coins/coins",{Coin:allCoins}); // feed the coins.ejs with the Coins found in the DB and render the template
 		};
 	});
@@ -80,7 +85,7 @@ app.post("/coins", upload.single("icon") ,(req, res) => {
 
 			}
 		});
-		res.redirect("/coins/:acronym");
+		res.redirect("/coins");
 	});
 });
 
@@ -145,17 +150,17 @@ app.post("/coins/:acronym/comments", (req, res) => {
 			res.redirect("/coins");
 		}else{
 		//	console.log(req.body.comment);
-			Comment.create(req.body.comment, (err,comment) => {
-				if(err){				
-					res.redirect("/coins/:acronym");
-				}else{
-					coin.comments.push(comment);
-					coin.save();
-					res.redirect("/coins/" + coin.acronym);
-				}
-			});
-		}
-	});
+		Comment.create(req.body.comment, (err,comment) => {
+			if(err){				
+				res.redirect("/coins/:acronym");
+			}else{
+				coin.comments.push(comment);
+				coin.save();
+				res.redirect("/coins/" + coin.acronym);
+			}
+		});
+	}
+});
 });
 
 
