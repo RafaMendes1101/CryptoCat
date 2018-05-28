@@ -3,16 +3,15 @@
 <section class="container">
 	<div class="thumbnail" style="padding: 0">
 		<div class="row">
-			<div class="col-md-2 col-sm-2">
-				<div class="list-group">
-					<li class="list-group-item"><%=Coin.name%></li>
+			<div class="col-md-3 col-sm-3">
+
+				<div class="list-group" id="grupo-lista">
+					<li class="list-group-item"><%=Coin.name%> - <img src="<%= Coin.icon %>" alt="Bitcoin logo"  style="width: 12%;"> </li>
+					<li class="list-group-item"><a href="/coins">Back</a></li>
 				</div>
 			</div>
-			<div class="col-md-2 col-sm-2 text-center">
-				<img src="<%= Coin.icon %>" alt="Bitcoin logo"  style="width: 100%; ">
-			</div>
-			<div class="col-md-3 col-sm-3 text-center">
-				<p style="padding: 20px;"><%= Coin.description%></p>
+			<div class="col-md-4 col-sm-4 text-center">
+				<p id="coin-description"><%= Coin.description%></p>
 			</div>
 			<div class="col-md-5 col-sm-5">
 				<iframe width="100%" height="350" src="<%=Coin.video%>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
