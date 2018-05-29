@@ -54,7 +54,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-
+// feed currentUser into all templates
+app.use(function(req,res,next){ 
+	res.locals.currentUser = req.user;
+	next();
+});
 
 
 app.get("/", (req, res) => {
@@ -62,7 +66,7 @@ app.get("/", (req, res) => {
 		if(err){
 			console.log(err);
 		} else {
-			res.render("home",{Coin:allCoins});
+			res.render("home",{Coin:allCoins , currentUser: req.user});
 		};
 	});
 });
@@ -74,7 +78,7 @@ app.get("/coins", (req, res)=> {
 		if(err){
 			console.log(err);
 		} else {			
-			res.render("coins/coins",{Coin:allCoins}); // feed the coins.ejs with the Coins found in the DB and render the template
+			res.render("coins/coins",{Coin:allCoins, currentUser: req.user}); // feed the coins.ejs with the Coins found in the DB and render the template
 		};
 	});
 
@@ -82,7 +86,7 @@ app.get("/coins", (req, res)=> {
 
 
 //CREATE NEW COIN ROUTE
-app.post("/coins", upload.single("icon") ,(req, res) => {	
+app.post("/coins", isLoggedIn, upload.single("icon") ,(req, res) => {	
 	cloudinary.uploader.upload(req.file.path, (result) => {
 		var name = req.body.name;
 		var icon = result.secure_url;
@@ -112,24 +116,23 @@ app.get("/newuser", (req,res) =>{
 
 //create new user route
 app.post("/newuser", (req,res) => {
-	var username = req.body.name;
-	var email = req.body.email;
-	var password = req.body.password;
-	var newUser = {name: name, email: email, password: password};
-	User.create(newUser, (err, newUser) =>{
+	var newUser = new User({username: req.body.username, email: req.body.email});
+	User.register(newUser, req.body.password, (err, newUser) =>{
 		if(err){
 			console.log(err);
-		}else{
-			console.log("Novo usuario criado");
-			res.redirect("/");
+			return res.render("users/newuser");
 		}
+		console.log("Novo usuario criado");
+		passport.authenticate("local")(req, res, () => {
+			res.redirect("/coins");		
+		})		
 	});
 });
 
 //NEW - show form to create new coin post
-app.get("/coins/newcoin", (req,res) => {
+app.get("/coins/newcoin", isLoggedIn, (req,res) => {
 	res.render("coins/newcoin.ejs");
-		}); //show the form to create a new coin
+}); //show the form to create a new coin
 
 //SHOW -  shows more info about one coin
 app.get("/coins/:acronym", (req,res) =>{
@@ -141,13 +144,11 @@ app.get("/coins/:acronym", (req,res) =>{
 			res.render("coins/show.ejs",{Coin:foundCoin});
 		}
 	});
-//req.params.acronym;
-
 });
 //===============
 //comments routes
 //===============
-app.get("/coins/:acronym/comments/new", (req,res) => {
+app.get("/coins/:acronym/comments/new", isLoggedIn, (req,res) => {
 	Coin.findOne({acronym: req.params.acronym}, (err, coin) => {
 		//console.log(coin)
 		if(err){
@@ -158,7 +159,7 @@ app.get("/coins/:acronym/comments/new", (req,res) => {
 	});		
 });
 
-app.post("/coins/:acronym/comments", (req, res) => {
+app.post("/coins/:acronym/comments", isLoggedIn, (req, res) => {
 	Coin.findOne({acronym: req.params.acronym}, (err, coin) => {
 		if(err){
 			console.log(err)
@@ -178,7 +179,28 @@ app.post("/coins/:acronym/comments", (req, res) => {
 });
 });
 
+app.get("/login", (req, res) => {
+	res.render("login");
+});
 
+app.post("/login", passport.authenticate("local", {
+	successRedirect: "/coins",
+	failureRedirect: "login"
+}),(req,res) => {
+
+});
+//logou route
+app.get("/logout", (req,res) => {
+	req.logout();
+	res.redirect("/coins");
+});
+
+function isLoggedIn(req, res, next){
+	if(req.isAuthenticated()){
+		return next();
+	}
+	res.redirect("/login");
+}
 
 app.listen(3000,  () => {
 	console.log("CryptoCat Server Started");
