@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router({mergeParams: true});
 var Coin = require("../models/coins");
+var bodyParser = require("body-parser");
 var Comment = require("../models/comment");
 //===============
 //comments routes
@@ -27,6 +28,9 @@ router.post("/coins/:acronym/comments", isLoggedIn, (req, res) => {
 			if(err){				
 				res.redirect("/coins/:acronym");
 			}else{
+				comment.author.id = req.user._id; 
+				comment.author.username = req.user.username;
+				comment.save();
 				coin.comments.push(comment);
 				coin.save();
 				res.redirect("/coins/" + coin.acronym);
