@@ -6,6 +6,7 @@
 			<div class="col-md-3 col-sm-3">
 
 				<div class="list-group" id="grupo-lista">
+					<li class="list-group-item">Posted by: <%=Coin.author.username%></li>
 					<li class="list-group-item"><%=Coin.name%> - <img src="<%= Coin.icon %>" alt="Bitcoin logo"  style="width: 12%;"> </li>
 					<li class="list-group-item"><a href="/coins">Back</a></li>
 				</div>
@@ -26,7 +27,7 @@
 		<% Coin.comments.forEach((comment) => { %>	
 		<div class="form-group row">
 			<div class="col-md-12 col-sm-12 text-left">									
-				<strong><%= comment.author %></strong>
+				<strong><%= comment.author.username %></strong>
 				<span class="pull-right">10 days ago</span>	
 				<p>
 					<%= comment.text %>
