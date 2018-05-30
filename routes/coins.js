@@ -49,7 +49,7 @@ router.post("/", isLoggedIn, upload.single("icon") ,(req, res) => {
 		var acronym = req.body.acronym;
 		var desc = req.body.description;
 		var video = req.body.video;
-		var newCoin = {name: name, acronym: acronym, icon: icon, description: desc, video: video};
+		var newCoin = {name: name, acronym: acronym, icon: icon, description: desc, video: video, author: {id: req.user._id, username: req.user.username}};
 		//console.log(newCoin);
 		Coin.create(newCoin, (err, newCoin) => {
 			if(err){
