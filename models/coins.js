@@ -8,11 +8,18 @@ var coinSchema = new mongoose.Schema({
 	icon: String,
 	description: String,
 	video: String,
-	comments: [
-		{
+	author:{
+		id: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "comment"
-		}
+			ref: "user"
+		},
+		username: String
+	},
+	comments: [
+	{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "comment"
+	}
 	]
 });
 
