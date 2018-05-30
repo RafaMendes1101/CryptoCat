@@ -17,7 +17,7 @@
 		</div>
 	</div>
 
-	<div id="section">
+	<div id="section" style="display: none;">
 		<section id="inner-section">
 			<div class="row text-center" style="display: flex; flex-wrap: wrap;">			
 				<div class="col-md-3 col-sm-6">
@@ -39,26 +39,11 @@
 	var selectedCoin = document.getElementById("coinSelector");
 	var selectOption = document.getElementsByTagName("option");
 
-	var setor = document.getElementById("section");
-	console.log(setor);
-
-	setor.addEventListener("load", () => {
-		console.log("here");
-		works(); // DOESN'T WORK. WHY?
-	});
+	var setor = document.getElementById("section");	
 
 	selectedCoin.addEventListener("change", () => { 
 		showCoin(); // this works
 	});
-
-	
-	function works() {
-		alert("works");
-	}
-
-	function hideSetor() {
-		setor.style.display = "none";
-	}
 
 	function showCoin() {
 
@@ -66,20 +51,19 @@
 		var acronym = selectedCoin.value.split("-")[1];
 		var icon = selectedCoin.value.split("-")[2];
 
-
 		if(!name){
 			var name = "pick";
-			var hide = document.getElementsByTagName("section")[0];
-			hide.style.display = "none";
+			
+			setor.style.display = "none";
 			event.stopPropagation();
 
 		} else {
-			var hide = document.getElementsByTagName("section")[0];
+			
 			document.getElementsByTagName("h4")[0].innerHTML= name;
 			document.getElementsByTagName("img")[0].src = icon;
 			document.getElementById("acronym").innerHTML = "Learn more about " + acronym;
 			document.getElementById("acronym").href ="/coins/" + acronym;
-			hide.style.display = "block";
+			setor.style.display = "block";
 
 			event.stopPropagation();
 		}
