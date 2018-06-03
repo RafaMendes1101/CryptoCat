@@ -6,8 +6,8 @@ var Comment = require("../models/comment");
 //===============
 //comments routes
 //===============
-router.get("/coins/:acronym/comments/new", isLoggedIn, (req,res) => {
-	Coin.findOne({acronym: req.params.acronym}, (err, coin) => {
+router.get("/coins/:id/comments/new", isLoggedIn, (req,res) => {
+	Coin.findById(req.params.id, (err, coin) => {
 		//console.log(coin)
 		if(err){
 			console.log(err);
@@ -17,8 +17,8 @@ router.get("/coins/:acronym/comments/new", isLoggedIn, (req,res) => {
 	});		
 });
 
-router.post("/coins/:acronym/comments", isLoggedIn, (req, res) => {
-	Coin.findOne({acronym: req.params.acronym}, (err, coin) => {
+router.post("/coins/:id/comments", isLoggedIn, (req, res) => {
+	Coin.findById(req.params.id, (err, coin) => {
 		if(err){
 			console.log(err)
 			res.redirect("/coins");
@@ -26,14 +26,14 @@ router.post("/coins/:acronym/comments", isLoggedIn, (req, res) => {
 		//	console.log(req.body.comment);
 		Comment.create(req.body.comment, (err,comment) => {
 			if(err){				
-				res.redirect("/coins/:acronym");
+				res.redirect("/coins/:id");
 			}else{
-				comment.author.id = req.user._id; 
+				comment.author.id = req.user.id; 
 				comment.author.username = req.user.username;
 				comment.save();
 				coin.comments.push(comment);
 				coin.save();
-				res.redirect("/coins/" + coin.acronym);
+				res.redirect("/coins/" + coin.id);
 			}
 		});
 	}

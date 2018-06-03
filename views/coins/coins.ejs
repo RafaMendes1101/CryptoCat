@@ -10,7 +10,7 @@
 				<select id="coinSelector" class="form-control">
 					<option value="">Pick a coin</option>
 					<% Coin.forEach((coin) => { %>
-					<option value="<%= coin.name %>-<%= coin.acronym %>-<%= coin.icon%>"> <%= coin.name %> </option>				
+					<option value="<%= coin.name %>-<%= coin.acronym %>-<%= coin.icon%>-<%=coin._id%>"> <%= coin.name %> </option>				
 					<% });%>
 				</select>
 			</div>
@@ -46,11 +46,11 @@
 	});
 
 	function showCoin() {
-
+		
 		var name = selectedCoin.value.split("-")[0];
 		var acronym = selectedCoin.value.split("-")[1];
 		var icon = selectedCoin.value.split("-")[2];
-
+		var id= selectedCoin.value.split("-")[3];
 		if(!name){
 			var name = "pick";
 			
@@ -62,7 +62,7 @@
 			document.getElementsByTagName("h4")[0].innerHTML= name;
 			document.getElementsByTagName("img")[0].src = icon;
 			document.getElementById("acronym").innerHTML = "Learn more about " + acronym;
-			document.getElementById("acronym").href ="/coins/" + acronym;
+			document.getElementById("acronym").href ="/coins/" + id;
 			setor.style.display = "block";
 
 			event.stopPropagation();

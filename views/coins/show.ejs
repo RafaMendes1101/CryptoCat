@@ -20,8 +20,9 @@
 		</div>
 	</div>
 	<div class="well">
+		
 		<div class="text-right">
-			<a href="/coins/<%= Coin.acronym %>/comments/new" class="btn btn-primary bt-lg">Comment</a>
+			<a href="/coins/<%= Coin._id %>/comments/new" class="btn btn-primary bt-lg">Comment</a>
 		</div>
 		<hr>
 		<% Coin.comments.forEach((comment) => { %>	
@@ -35,7 +36,9 @@
 			</div>
 		</div>
 		<%});%>
-
+		<div class="text-right">
+			<a href="/coins/<%= Coin._id %>/edit" class="btn btn-warning bt-lg">Edit</a>
+		</div>
 	</div>
 </div>
 

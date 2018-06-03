@@ -71,8 +71,9 @@ router.get("/newcoin", isLoggedIn, (req,res) => {
 }); //show the form to create a new coin
 
 //SHOW -  shows more info about one coin
-router.get("/:acronym", (req,res) =>{
-	Coin.findOne({acronym: req.params.acronym}).populate("comments").exec(function(err,foundCoin){
+router.get("/:id", (req,res) =>{
+	//console.log(req.params.id);
+	Coin.findById(req.params.id).populate("comments").exec(function(err,foundCoin){
 		if (err){
 			console.log(err)
 		} else {
@@ -81,6 +82,38 @@ router.get("/:acronym", (req,res) =>{
 		}
 	});
 });
+
+//EDIT ROUTE
+router.get("/:id/edit",  (req, res) => {	
+	Coin.findById(req.params.id, (err, foundCoin) => {
+		if(err){
+			res.redirect("/coins");
+		}else {
+			//console.log(foundCoin);
+			res.render("coins/edit", {Coin:foundCoin});
+		}
+	});	
+});
+//UPDATE ROUTE upload.single("icon"),
+router.put("/:id",isLoggedIn, upload.single("icon"),(req,res) => {	
+	cloudinary.uploader.upload(req.file.path, (result) => {	
+		var name = req.body.name;
+		var icon = result.secure_url;
+		var acronym = req.body.acronym;
+		var desc = req.body.description;
+		var video = req.body.video;
+		var dataUpdate = {name: name, acronym: acronym, icon: icon, description: desc, video: video};
+
+		Coin.findByIdAndUpdate(req.params.id, dataUpdate, (err, updatedCoin) => {
+			if(err){
+				res.redirect("/coins");
+			} else {
+				res.redirect("/coins/" + req.params.id);
+			}
+		});
+	});
+});
+
 
 function isLoggedIn(req, res, next){
 	if(req.isAuthenticated()){

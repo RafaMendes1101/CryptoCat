@@ -10,11 +10,12 @@ var LocalStrategy = require("passport-local");
 var Comment = require("./models/comment");
 var path = require('path');
 var fs = require("fs"); // file system
+var methodOverride = require("method-override");
 var commentRoutes = require("./routes/comments"),
 	coinsRoutes = require("./routes/coins"),
 	indexRoutes = require("./routes/index")
 
-//seedDB(); 
+seedDB(); 
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -22,6 +23,8 @@ app.use(require("express-session")({
 	resave: false,
 	saveUninitialized: false
 }));
+
+app.use(methodOverride("_method"));
 
 app.use(passport.initialize());
 app.use(passport.session());
