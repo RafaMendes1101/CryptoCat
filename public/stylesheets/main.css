@@ -13,3 +13,8 @@
 	position: relative;
 	padding-top: 7%;
 }
+
+
+#delete-form {
+	display: inline;
+}
