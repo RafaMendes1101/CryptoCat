@@ -7,23 +7,16 @@
 			<form action="/coins/<%=Coin._id%>?_method=PUT" method="POST" enctype="multipart/form-data">	
 				<div class="form-group">	
 					<input class="form-control" type="text" value="<%=Coin.name%>" name="name">	
-				</div>
-				<div class="form-group">	
+				
 					<input class="form-control" type="text" value="<%=Coin.acronym%>" name="acronym" maxlength="5" minlength="3" size="3">	
-				</div>
-				<div class="form-group">
+					
 					<input class="form-control" type="text" name="description" id="description" value="<%= Coin.description %>">
-				</div>
-				<div class="form-group">
+					
 					<input class="form-control" type="text" name="video" id="video" value="<%= Coin.video%>" />
-				</div>
-				<div class="form-group">
+					
 					<label class="form-control" for="icon">Choose an icon to upload(PNG)</label>
-				</div>
-				<div class="form-group">
 					<input class="form-control" type="file" name="icon" id="icon" accept=".png">
-				</div>
-				<div class="form-group">
+					
 					<button class="btn btn-lg upload-btn btn-block">Submit!</button>
 				</div>
 				<a href="/">Go Back</a>
