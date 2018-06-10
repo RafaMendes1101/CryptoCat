@@ -15,7 +15,7 @@ var commentRoutes = require("./routes/comments"),
 	coinsRoutes = require("./routes/coins"),
 	indexRoutes = require("./routes/index")
 
-seedDB(); 
+//seedDB(); 
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
