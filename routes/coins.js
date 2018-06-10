@@ -113,7 +113,16 @@ router.put("/:id",isLoggedIn, upload.single("icon"),(req,res) => {
 		});
 	});
 });
-
+// DESTROY ROUTE
+router.delete("/:id", isLoggedIn, (req, res) => {
+	Coin.findByIdAndRemove(req.params.id, req.body.id, (err, deleteCoin) => {
+		if(err){
+			res.redirect("/coins/" + req.params.id);
+		} else {
+			res.redirect("/coins");
+		}
+	})
+});
 
 function isLoggedIn(req, res, next){
 	if(req.isAuthenticated()){
