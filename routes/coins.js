@@ -43,14 +43,22 @@ router.get("/", (req, res)=> {
 
 //CREATE NEW COIN ROUTE
 router.post("/", isLoggedIn, upload.single("icon") ,(req, res) => {	
-	cloudinary.uploader.upload(req.file.path, (result) => {
-		var name = req.body.name;
-		var icon = result.secure_url;
-		var acronym = req.body.acronym;
-		var desc = req.body.description;
-		var video = req.body.video;
-		var newCoin = {name: name, acronym: acronym, icon: icon, description: desc, video: video, author: {id: req.user._id, username: req.user.username}};
-		//console.log(newCoin);
+	cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
+		if(err) {
+			req.flash('error', err.message);
+			return res.redirect('back');
+		}
+		var newCoin = {
+			name: req.body.name, 
+			acronym: req.body.acronym, 
+			icon: result.secure_url,iconId: result.public_id, 
+			description: req.body.description,
+			video: req.body.video, 
+			author: {
+				id: req.user._id, 
+				username: req.user.username
+			}
+		};
 		Coin.create(newCoin, (err, newCoin) => {
 			if(err){
 				console.log("erro")
@@ -96,30 +104,51 @@ router.get("/:id/edit", chkPostOwner, (req, res) => {
 
 //UPDATE ROUTE upload.single("icon"),
 router.put("/:id",chkPostOwner, upload.single("icon"),(req,res) => {	
-	cloudinary.uploader.upload(req.file.path, (result) => {	
-		var name = req.body.name;
-		var icon = result.secure_url;
-		var acronym = req.body.acronym;
-		var desc = req.body.description;
-		var video = req.body.video;
-		var dataUpdate = {name: name, acronym: acronym, icon: icon, description: desc, video: video};
+	Coin.findById(req.params.id, (err, foundCoin) => {
+		if(err){
+			console.log(err);
+			return res.redirect("back");
+		}
+		if (req.file){
+			cloudinary.v2.uploader.destroy(foundCoin.iconId, (err)=>{
+				if(err){
+					console.log("erro1");
+					return res.redirect("back");
+				}			
+				cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
+					if(err){
+						console.log("erro2");
+						return res.redirect("back");
+					}
+					foundCoin.iconId = result.public_id;
+					foundCoin.icon = result.secure_url;
+					foundCoin.save();
+				});
+			});
+		}
 
-		Coin.findByIdAndUpdate(req.params.id, dataUpdate, (err, updatedCoin) => {
-			if(err){
-				res.redirect("/coins");
-			} else {
-				res.redirect("/coins/" + req.params.id);
-			}
-		});
+		foundCoin.name = req.body.name;
+		foundCoin.description = req.body.description;
+		foundCoin.video = req.body.video;
+		foundCoin.acronym = req.body.acronym;
+		foundCoin.save();		
+		res.redirect("/coins/" + req.params.id);
 	});
 });
+
 // DESTROY ROUTE
 router.delete("/:id", chkPostOwner, (req, res) => {
 	Coin.findByIdAndRemove(req.params.id, req.body.id, (err, deleteCoin) => {
 		if(err){
 			res.redirect("/coins/" + req.params.id);
 		} else {
-			res.redirect("/coins");
+			cloudinary.v2.uploader.destroy(deleteCoin.iconId,(err, result)=>{
+				if(err){
+					console.log(err);
+				}else{
+					res.redirect("/coins");
+				}			
+			});
 		}
 	})
 });
@@ -146,4 +175,3 @@ function chkPostOwner(req,res, next){
 	}
 }
 module.exports = router;
-
