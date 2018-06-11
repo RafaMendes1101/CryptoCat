@@ -42,6 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // feed currentUser into all templates
 app.use(function(req,res,next){ 
 	res.locals.currentUser = req.user;
+	//
 	next();
 });
 
