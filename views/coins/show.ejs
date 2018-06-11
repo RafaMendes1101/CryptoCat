@@ -23,15 +23,16 @@
 		<% if(currentUser && Coin.author.id.equals(currentUser._id)){%>
 		<div class="text-left">
 			<form id="delete-form" action="/coins/<%= Coin._id %>?_method=DELETE" method="POST">
-				<button class="btn btn-danger">Delete</button>
+				<button class="btn btn-danger">Delete Post</button>
 			</form>
-			<a href="/coins/<%= Coin._id %>/edit" class="btn btn-warning bt-lg text-right">Edit</a>
+			<a href="/coins/<%= Coin._id %>/edit" class="btn btn-warning bt-lg text-right">Edit Post</a>
 		</div>
 		<%}%>
 		<hr>
 		<div class="text-right">
+			<% if(currentUser){ %>
 			<a href="/coins/<%= Coin._id %>/comments/new" class="btn btn-primary bt-lg">Comment</a>
-
+			<% }%>
 
 			<% Coin.comments.forEach((comment) => { %>	
 			<div class="form-group row">
@@ -40,12 +41,16 @@
 					<span class="pull-right">10 days ago</span>	
 					<p>
 						<%= comment.text %>
-					</p>								
+					</p>
+					<% if(currentUser && comment.author.id.equals(currentUser._id)){%>				
+					<form id="delete-comment" action="/coins/<%= Coin._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">		
+						<button class="btn btn-xs btn-danger">Delete Comment</button>
+					</form>
+					<a class="btn btn-xs btn-warning" href="/coins/<%= Coin._id%>/comments/<%=comment._id%>/edit">Edit Comment</a>
+					<%}%>
 				</div>
 			</div>
 			<%});%>
-
-
 		</div>
 	</div>
 </div>
