@@ -4,6 +4,7 @@ var multer = require('multer');
 var path = require('path');
 var fs = require("fs"); // file system
 var Coin = require("../models/coins");
+var middleware = require("../middleware");
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -41,7 +42,7 @@ router.get("/", (req, res)=> {
 
 
 //CREATE NEW COIN ROUTE
-router.post("/",isLoggedIn, upload.single("icon") ,(req, res) => {	
+router.post("/",middleware.isLoggedIn, upload.single("icon") ,(req, res) => {	
 	cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
 		if(err) {
 			req.flash('error', err.message);
@@ -73,7 +74,7 @@ router.post("/",isLoggedIn, upload.single("icon") ,(req, res) => {
 
 
 //NEW - show form to create new coin post
-router.get("/newcoin", isLoggedIn, (req,res) => {
+router.get("/newcoin", middleware.isLoggedIn, (req,res) => {
 	res.render("coins/newcoin.ejs");
 }); //show the form to create a new coin
 
@@ -91,7 +92,7 @@ router.get("/:id", (req,res) =>{
 });
 
 //EDIT ROUTE
-router.get("/:id/edit", chkPostOwner, (req, res) => {	
+router.get("/:id/edit", middleware.chkPostOwner, (req, res) => {	
 	Coin.findById(req.params.id, (err, foundCoin) => {
 		if(err){
 			res.redirect("/coins");
@@ -102,7 +103,7 @@ router.get("/:id/edit", chkPostOwner, (req, res) => {
 });
 
 //UPDATE ROUTE upload.single("icon"),
-router.put("/:id",chkPostOwner, upload.single("icon"),(req,res) => {	
+router.put("/:id",middleware.chkPostOwner, upload.single("icon"),(req,res) => {	
 	Coin.findById(req.params.id, (err, foundCoin) => {
 		if(err){
 			console.log(err);
@@ -136,7 +137,7 @@ router.put("/:id",chkPostOwner, upload.single("icon"),(req,res) => {
 });
 
 // DESTROY ROUTE
-router.delete("/:id", chkPostOwner, (req, res) => {
+router.delete("/:id", middleware.chkPostOwner, (req, res) => {
 	Coin.findByIdAndRemove(req.params.id, req.body.id, (err, deleteCoin) => {
 		if(err){
 			res.redirect("/coins/" + req.params.id);
@@ -152,25 +153,5 @@ router.delete("/:id", chkPostOwner, (req, res) => {
 	})
 });
 
-function isLoggedIn(req, res, next){
-	if(req.isAuthenticated()){
-		return next();
-	}
-	res.redirect("/login");
-}
 
-function chkPostOwner(req,res, next){
-	if(req.isAuthenticated()){
-		Coin.findById(req.params.id, (err, foundCoin)=>{
-			if(err) res.redirect("back");
-			if(foundCoin.author.id.equals(req.user._id)){
-				return next();
-			}else {
-				res.send("You can only edit your own posts");
-			}
-		});
-	} else {
-		res.redirect("/login");
-	}
-}
 module.exports = router;
