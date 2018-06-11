@@ -10,6 +10,7 @@ var LocalStrategy = require("passport-local");
 var Comment = require("./models/comment");
 var path = require('path');
 var fs = require("fs"); // file system
+var flash = require("connect-flash");
 var methodOverride = require("method-override");
 var commentRoutes = require("./routes/comments"),
 	coinsRoutes = require("./routes/coins"),
@@ -39,13 +40,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, 'public')));
-// feed currentUser into all templates
-app.use(function(req,res,next){ 
+
+app.use(flash());
+
+app.use(function(req,res,next){ // feed these variables into all templates
 	res.locals.currentUser = req.user;
-	//
+	res.locals.error = req.flash("error");
+	res.locals.success = req.flash("success");
 	next();
 });
-
 
 
 app.use(indexRoutes);

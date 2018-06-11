@@ -32,6 +32,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
 					comment.save();
 					coin.comments.push(comment);
 					coin.save();
+					req.flash("success","Comment succesfully added");
 					res.redirect("/coins/" + coin.id);
 				}
 			});
@@ -56,6 +57,7 @@ router.put("/:comment_id",middleware.chkCommentOwner, (req,res) => {
 		if(err){
 			res.redirect("back");
 		} else {
+			req.flash("success","Comment succesfully edited");
 			res.redirect("/coins/" + req.params.id);
 		}
 	});
@@ -66,6 +68,7 @@ router.delete("/:comment_id",middleware.chkCommentOwner, (req,res)=>{
 		if(err){
 			res.redirect("back");
 		} else {
+			req.flash("success","Comment succesfully deleted");
 			res.redirect("/coins/" + req.params.id);
 		}
 	})

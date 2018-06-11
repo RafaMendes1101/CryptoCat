@@ -30,6 +30,7 @@ cloudinary.config({
 //INDEX ROUTE
 router.get("/", (req, res)=> {
 	//Get all coins from DB
+
 	Coin.find({}, (err, allCoins)=>{ //find all Coins on DB
 		if(err){
 			console.log(err);
@@ -45,7 +46,7 @@ router.get("/", (req, res)=> {
 router.post("/",middleware.isLoggedIn, upload.single("icon") ,(req, res) => {	
 	cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
 		if(err) {
-			req.flash('error', err.message);
+			req.flash("error", err.message);
 			return res.redirect('back');
 		}
 		var newCoin = {
@@ -61,11 +62,10 @@ router.post("/",middleware.isLoggedIn, upload.single("icon") ,(req, res) => {
 		};
 		Coin.create(newCoin, (err, newCoin) => {
 			if(err){
-				console.log("erro")
+				req.flash("error", "Something went wrong");
 				return res.redirect("back");
 			}else{
-				console.log("Nova moeda adicionada");
-
+				req.flash("success", "New coin was added");
 			}
 		});
 		res.redirect("/coins");
@@ -82,8 +82,9 @@ router.get("/newcoin", middleware.isLoggedIn, (req,res) => {
 router.get("/:id", (req,res) =>{
 	//console.log(req.params.id);
 	Coin.findById(req.params.id).populate("comments").exec(function(err,foundCoin){
-		if (err){
-			console.log(err)
+		if (err || !foundCoin){
+			req.flash("error", "Coin not found");
+			res.redirect("back");
 		} else {
 			//console.log(foundCoin);
 			res.render("coins/show.ejs",{Coin:foundCoin});
@@ -94,7 +95,8 @@ router.get("/:id", (req,res) =>{
 //EDIT ROUTE
 router.get("/:id/edit", middleware.chkPostOwner, (req, res) => {	
 	Coin.findById(req.params.id, (err, foundCoin) => {
-		if(err){
+		if(err || !foundCoin){
+			req.flash("error", "Post not found");
 			res.redirect("/coins");
 		}else {
 			res.render("coins/edit", {Coin:foundCoin});
@@ -106,18 +108,18 @@ router.get("/:id/edit", middleware.chkPostOwner, (req, res) => {
 router.put("/:id",middleware.chkPostOwner, upload.single("icon"),(req,res) => {	
 	Coin.findById(req.params.id, (err, foundCoin) => {
 		if(err){
-			console.log(err);
+			req.flash("error",err);
 			return res.redirect("back");
 		}
 		if (req.file){
 			cloudinary.v2.uploader.destroy(foundCoin.iconId, (err)=>{
 				if(err){
-					console.log("erro1");
+					req.flash("error", err);
 					return res.redirect("back");
 				}			
 				cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
 					if(err){
-						console.log("erro2");
+						req.flash("error", err);
 						return res.redirect("back");
 					}
 					foundCoin.iconId = result.public_id;
@@ -132,6 +134,7 @@ router.put("/:id",middleware.chkPostOwner, upload.single("icon"),(req,res) => {
 		foundCoin.video = req.body.video;
 		foundCoin.acronym = req.body.acronym;
 		foundCoin.save();		
+		req.flash("success", "Coin succesfully updated");
 		res.redirect("/coins/" + req.params.id);
 	});
 });
@@ -144,8 +147,9 @@ router.delete("/:id", middleware.chkPostOwner, (req, res) => {
 		} else {
 			cloudinary.v2.uploader.destroy(deleteCoin.iconId,(err, result)=>{
 				if(err){
-					console.log(err);
+					req.flash("error", err);
 				}else{
+					req.flash("success", "Coin succesfully deleted");
 					res.redirect("/coins");
 				}			
 			});
