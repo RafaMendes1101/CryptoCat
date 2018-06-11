@@ -4,7 +4,6 @@ var multer = require('multer');
 var path = require('path');
 var fs = require("fs"); // file system
 var Coin = require("../models/coins");
-
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -42,7 +41,7 @@ router.get("/", (req, res)=> {
 
 
 //CREATE NEW COIN ROUTE
-router.post("/", isLoggedIn, upload.single("icon") ,(req, res) => {	
+router.post("/",isLoggedIn, upload.single("icon") ,(req, res) => {	
 	cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
 		if(err) {
 			req.flash('error', err.message);
