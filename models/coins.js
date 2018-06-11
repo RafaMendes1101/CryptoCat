@@ -8,6 +8,7 @@ var coinSchema = new mongoose.Schema({
 	icon: String,
 	description: String,
 	video: String,
+	iconId: String,
 	author:{
 		id: {
 			type: mongoose.Schema.Types.ObjectId,
