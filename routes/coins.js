@@ -84,18 +84,18 @@ router.get("/:id", (req,res) =>{
 });
 
 //EDIT ROUTE
-router.get("/:id/edit",  (req, res) => {	
+router.get("/:id/edit", chkPostOwner, (req, res) => {	
 	Coin.findById(req.params.id, (err, foundCoin) => {
 		if(err){
 			res.redirect("/coins");
 		}else {
-			//console.log(foundCoin);
 			res.render("coins/edit", {Coin:foundCoin});
 		}
 	});	
 });
+
 //UPDATE ROUTE upload.single("icon"),
-router.put("/:id",isLoggedIn, upload.single("icon"),(req,res) => {	
+router.put("/:id",chkPostOwner, upload.single("icon"),(req,res) => {	
 	cloudinary.uploader.upload(req.file.path, (result) => {	
 		var name = req.body.name;
 		var icon = result.secure_url;
@@ -114,7 +114,7 @@ router.put("/:id",isLoggedIn, upload.single("icon"),(req,res) => {
 	});
 });
 // DESTROY ROUTE
-router.delete("/:id", isLoggedIn, (req, res) => {
+router.delete("/:id", chkPostOwner, (req, res) => {
 	Coin.findByIdAndRemove(req.params.id, req.body.id, (err, deleteCoin) => {
 		if(err){
 			res.redirect("/coins/" + req.params.id);
@@ -131,4 +131,19 @@ function isLoggedIn(req, res, next){
 	res.redirect("/login");
 }
 
+function chkPostOwner(req,res, next){
+	if(req.isAuthenticated()){
+		Coin.findById(req.params.id, (err, foundCoin)=>{
+			if(err) res.redirect("back");
+			if(foundCoin.author.id.equals(req.user._id)){
+				return next();
+			}else {
+				res.send("You can only edit your own posts");
+			}
+		});
+	} else {
+		res.redirect("/login");
+	}
+}
 module.exports = router;
+
